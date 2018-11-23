@@ -1,52 +1,63 @@
 <?php
 
-$begin = microtime(true);
-
-function build_ext($name) {
-//    if (!file_exists($name)) { print "No such directory : '$name'. Aborting\n"; return; }
-//    if (!is_dir($name)) { print "Not a directory : '$name'. Aborting\n"; return ; }
-
-    // create with alias "project.phar"
-    if (file_exists("$name.phar")) {
-        unlink("$name.phar");
-    }
-
-    shell_exec('rm -rf exakat');
-    mkdir('exakat', 0755);
-    mkdir('exakat/Exakat', 0755);
-    
-    shell_exec('cp -r human exakat/human');
-    shell_exec('cp -r Analyzer exakat/Exakat/');
-    copy('analyzers.ini', 'exakat/Exakat/Analyzer/analyzers.ini');
-    shell_exec('cp -r Reports exakat/Exakat/');
-
-    $phar = new Phar("$name.phar", 0, "$name.phar");
-    $phar->buildFromDirectory('exakat');
-    /*
-    
-    TODO : set a stub for avoiding direct call
-    $stub = <<<'PHP'
-    #!/usr/bin/env php
-    <?php
-    Phar::mapPhar();
-    include 'phar://exakat.phar/exakat';
-    __HALT_COMPILER();
-    PHP;
-    $phar->setStub($stub);
-    */
-    print "Build $name.phar : ".filesize($name.'.phar')."o \n";
-    
-    shell_exec('rm -rf extract');
-    $phar2 = new phar("$name.phar");
-    $phar2->extractTo('extract');
-    print "phar://".dirname(__DIR__)."/Melis.phar/Exakat/Analyzer/$name/{$name}Usage.php";
-    var_dump(file_exists("phar://".dirname(__DIR__)."/Melis.phar/Exakat/Analyzer/$name/{$name}Usage.php"));
-    var_dump(file_exists("phar://".dirname(__DIR__)."/Melis.phar/Exakat/Analyzer/$name/MissingLanguage.php"));
+if (!file_exists('./config.ini')) {
+    die("No configuration available. Please, create the config.ini file.\n");
 }
 
-build_ext('Melis');
+$ini = parse_ini_file('config.ini');
+if ($ini === null) {
+    die("Couldn't read the config.ini file. Please, replace it and try again.\n");
+}
 
+if (!isset($ini['name'])) {
+    die("Couldn't read the name of the extension in the config.ini file. Please, update it and try again.\n");
+}
+$name = $ini['name'];
+
+$ini['build'] = (int) $ini['build']  + 1;
+$ini['last_build'] = date('Y-m-d');
+
+$iniFinal = <<<INI
+name       = "$ini[name]"
+version    = "$ini[version]"
+build      = $ini[build]
+last_build = $ini[last_build]
+exakat_path = '$ini[exakat_path]';
+
+INI;
+file_put_contents('config.ini', $iniFinal);
+
+
+$begin = microtime(true);
+if (file_exists("$name.phar")) {
+    unlink("$name.phar");
+}
+
+shell_exec('rm -rf exakat');
+mkdir('exakat', 0755);
+mkdir('exakat/Exakat', 0755);
+
+shell_exec('cp -r human exakat/human');
+shell_exec('cp -r Analyzer exakat/Exakat/');
+copy('analyzers.ini', 'exakat/Exakat/Analyzer/analyzers.ini');
+shell_exec('cp -r Reports exakat/Exakat/');
+
+$phar = new Phar("$name.phar", 0, "$name.phar");
+$phar->buildFromDirectory('exakat');
+print "Build $name.phar : ".filesize($name.'.phar')."o \n";
 $end = microtime(true);
+
+$iniFinal = <<<INI
+name       = "$ini[name]"
+version    = "$ini[version]"
+build      = $ini[build]
+last_build = $ini[last_build]
+exakat_path = '$ini[exakat_path]';
+
+INI;
+file_put_contents('config.ini', $iniFinal);
+
+
 print 'Done ('.number_format(($end - $begin) * 1000, 2).' ms)'.PHP_EOL;
 
 ?>

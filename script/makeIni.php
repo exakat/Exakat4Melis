@@ -10,4 +10,5 @@ foreach($files as $file) {
 
 $iniFile = implode(PHP_EOL, $ini);
 file_put_contents('analyzers.ini', $iniFile);
+
 ?>
