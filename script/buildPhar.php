@@ -18,10 +18,10 @@ $ini['build'] = (int) $ini['build']  + 1;
 $ini['last_build'] = date('Y-m-d');
 
 $iniFinal = <<<INI
-name       = "$ini[name]"
-version    = "$ini[version]"
-build      = $ini[build]
-last_build = $ini[last_build]
+name        = "$ini[name]"
+version     = "$ini[version]"
+build       = $ini[build]
+last_build  = $ini[last_build]
 exakat_path = '$ini[exakat_path]';
 
 INI;
@@ -46,6 +46,7 @@ $phar = new Phar("$name.phar", 0, "$name.phar");
 $phar->buildFromDirectory('exakat');
 print "Build $name.phar : ".filesize($name.'.phar')."o \n";
 $end = microtime(true);
+shell_exec('rm -rf exakat');
 
 $iniFinal = <<<INI
 name       = "$ini[name]"
@@ -58,6 +59,6 @@ INI;
 file_put_contents('config.ini', $iniFinal);
 
 
-print 'Done ('.number_format(($end - $begin) * 1000, 2).' ms)'.PHP_EOL;
+print 'Done with version '.$ini['version'].' (Build '.$ini['build'].') in '.number_format(($end - $begin) * 1000, 2).' ms'.PHP_EOL;
 
 ?>
