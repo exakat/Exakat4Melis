@@ -17,17 +17,6 @@ $name = $ini['name'];
 $ini['build'] = (int) $ini['build']  + 1;
 $ini['last_build'] = date('Y-m-d');
 
-$iniFinal = <<<INI
-name        = "$ini[name]"
-version     = "$ini[version]"
-build       = $ini[build]
-last_build  = $ini[last_build]
-exakat_path = '$ini[exakat_path]';
-
-INI;
-file_put_contents('config.ini', $iniFinal);
-
-
 $begin = microtime(true);
 if (file_exists("$name.phar")) {
     unlink("$name.phar");
@@ -39,11 +28,24 @@ mkdir('exakat/Exakat', 0755);
 
 shell_exec('cp -r human exakat/human');
 shell_exec('cp -r Analyzer exakat/Exakat/');
-copy('analyzers.ini', 'exakat/Exakat/Analyzer/analyzers.ini');
+copy('README.md', 'exakat/Exakat/Analyzer/README.md');
+copy('LICENCE.txt', 'exakat/Exakat/Analyzer/LICENCE.txt');
+copy('script/stub.php', 'exakat/stub.php');
 shell_exec('cp -r Reports exakat/Exakat/');
+
+$iniFinal = <<<INI
+name        = "$ini[name]"
+version     = "$ini[version]"
+build       = $ini[build]
+last_build  = $ini[last_build]
+
+INI;
+file_put_contents('exakat/config.ini', $iniFinal);
 
 $phar = new Phar("$name.phar", 0, "$name.phar");
 $phar->buildFromDirectory('exakat');
+$phar->setStub($phar->createDefaultStub('stub.php'));
+
 print "Build $name.phar : ".filesize($name.'.phar')."o \n";
 $end = microtime(true);
 shell_exec('rm -rf exakat');

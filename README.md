@@ -1,8 +1,10 @@
 # Melis extension for Exakat
 
-This is the Melis specific analysis and reports for the Exakat static analysis engine. 
+This is the [Melis](https://www.melistechnology.com/) specific analysis and reports for the Exakat static analysis engine. "Melis CMS & Commerce is a Open Source or Enterprise web platform very ergonomic, robust, efficient, 100% based on Zend Framework."
 
-This is the development code source of the Melis extension for Exakat. To run an audit with this code, install the Melis.phar extension in your copy of exakat. 
+Melis is a brand of [Melis Technology](https://www.skelet.com/).
+
+This is the development code source of the Skelet extension for Exakat. To run an audit with this code, install the Melis.phar extension in your copy of exakat. 
 
 ## Getting Started
 
@@ -28,7 +30,7 @@ To run the tests,
 
 ```
 cd tests;
-phpunit Tests/Melis/MissingTranslations.php
+phpunit Tests/Melis/MissingTranslation.php
 ```
 
 ## Deployment
@@ -49,4 +51,5 @@ Drag this phar to the <exakat>/ext/ folder of any installation to make the analy
 ## License
 
 This project is licensed under the  GNU Affero General Public License : see [LICENSE.md](LICENSE.md) file for details.
-Melis is a brand of [Melis Technology](https://www.melistechnology.com/).
+
+All product names, logos, and brands are property of their respective owners.
